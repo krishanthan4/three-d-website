@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Quicksand', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+.assassins-creed-theme {
+  --ac-red: #A12B28;
+  --ac-white: #FAFAFA;
+  --ac-dark: #262626;
+  --ac-gold: #C9A66B;
+  --ac-blue: #1C3F60;
+  --ac-black: #101010;
+  --ac-dark-red: #71160F;
+  --ac-light-red: #D94A41;
+  --ac-dark-gray: #1C1C1C;
+  --ac-light-gray: #999999;
+  
+  color-scheme: dark;
+  scrollbar-color: var(--ac-red) var(--ac-dark);
+  background-color: var(--ac-black);
+  color: white;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ac-red) var(--ac-dark-gray);
+}
+
+/* Custom Scrollbars for Assassin's Creed Theme */
+.assassins-creed-theme::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.assassins-creed-theme::-webkit-scrollbar-track {
+  background-color: var(--ac-dark-gray);
+}
+
+.assassins-creed-theme::-webkit-scrollbar-thumb {
+  background-color: var(--ac-red);
+  border-radius: 0px;
 }
