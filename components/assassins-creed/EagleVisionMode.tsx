@@ -11,8 +11,12 @@ export default function EagleVisionMode() {
   const { playSound } = useAudio()
   
   useEffect(() => {
-    // Play eagle vision sound effect
-    playSound('eagle')
+    // Play eagle vision sound effect - ensure it plays properly
+    try {
+      playSound('eagle')
+    } catch (error) {
+      console.error('Failed to play eagle vision sound:', error)
+    }
     
     // Identify targets, allies and info points
     const targets = document.querySelectorAll('[data-eagle-target="true"]')

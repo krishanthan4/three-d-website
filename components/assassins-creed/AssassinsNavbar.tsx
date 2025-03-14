@@ -30,7 +30,11 @@ export default function AssassinsNavbar({ synchronizationLevel }: NavbarProps) {
       menuItems.forEach(({ id }) => {
         const section = document.getElementById(id)
         if (section && scrollPosition >= section.offsetTop && scrollPosition < (section.offsetTop + section.offsetHeight)) {
-          setCurrentSection(id)
+          if (currentSection !== id) {
+            // Play sound when changing sections
+            playSound('marker')
+            setCurrentSection(id)
+          }
         }
       })
     }
@@ -39,7 +43,7 @@ export default function AssassinsNavbar({ synchronizationLevel }: NavbarProps) {
     handleScroll() // Initial check
 
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [currentSection, playSound])
 
   return (
     <>
@@ -59,7 +63,10 @@ export default function AssassinsNavbar({ synchronizationLevel }: NavbarProps) {
             href="#hero"
             className="flex items-center"
             whileHover={{ scale: 1.05 }}
-            onClick={() => playSound('click')}
+            onClick={() => {
+              playSound('click')
+              document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })
+            }}
           >
             <img 
               src="/images/assassins-creed/ac-logo.png" 
@@ -108,8 +115,7 @@ export default function AssassinsNavbar({ synchronizationLevel }: NavbarProps) {
               onMouseEnter={() => playSound('hover')}
               onClick={() => {
                 playSound('eagle')
-                // Toggle eagle vision is handled globally via keyboard 'V' key
-                alert('Press "V" key to toggle Eagle Vision')
+                document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'v'}))
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

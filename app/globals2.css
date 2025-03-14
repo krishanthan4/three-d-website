@@ -379,3 +379,20 @@ body {
   r: 22;
   stroke-width: 3;
 }
+
+/* Add text shadow for better visibility against 3D background */
+.text-shadow-lg {
+  text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+}
+
+/* Assassin's Creed marker text */
+.ac-marker-text {
+  font-family: 'Trajan Pro', serif;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px #ff0000;
+}
+
+/* 3D model highlight effect */
+.model-highlight {
+  filter: drop-shadow(0 0 10px rgba(255,0,0,0.7));
+}

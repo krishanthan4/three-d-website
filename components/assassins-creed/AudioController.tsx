@@ -8,12 +8,14 @@ type AudioContextType = {
   playSound: (sound: string) => void
   toggleMusic: () => void
   isMusicPlaying: boolean
+  startMusicPlayback: () => void
 }
 
 const AudioContext = createContext<AudioContextType>({
   playSound: () => {},
   toggleMusic: () => {},
-  isMusicPlaying: false
+  isMusicPlaying: false,
+  startMusicPlayback: () => {}
 })
 
 // Custom hook to use audio
@@ -44,24 +46,10 @@ export default function AudioController({ children }: { children?: React.ReactNo
   const [volume, setVolume] = useState(0.3)
   const [showControls, setShowControls] = useState(false)
   const [currentTrack, setCurrentTrack] = useState(0)
+  const [isAudioInitialized, setIsAudioInitialized] = useState(false)
   
   const musicRef = useRef<HTMLAudioElement | null>(null)
   const soundsRef = useRef<{ [key: string]: HTMLAudioElement }>({})
-  
-
-  // Handle track changes
-useEffect(() => {
-  if (musicRef.current) {
-    musicRef.current.pause();
-    musicRef.current.src = MUSIC_TRACKS[currentTrack];
-    musicRef.current.currentTime = 0; // Reset playback position to start
-    
-    if (isMusicPlaying) {
-      musicRef.current.play()
-        .catch(e => console.log('Music autoplay prevented:', e));
-    }
-  }
-}, [currentTrack, isMusicPlaying]);
 
   // Initialize audio elements
   useEffect(() => {
@@ -71,6 +59,11 @@ useEffect(() => {
       musicRef.current.loop = true
       musicRef.current.volume = volume
       
+      // Add ended event to handle continuous playback
+      musicRef.current.addEventListener('ended', () => {
+        nextTrack();
+      });
+      
       // Preload sound effects
       Object.entries(SOUNDS).forEach(([key, src]) => {
         const audio = new Audio(src)
@@ -78,6 +71,8 @@ useEffect(() => {
         audio.volume = volume
         soundsRef.current[key] = audio
       })
+      
+      setIsAudioInitialized(true)
     }
     
     return () => {
@@ -107,16 +102,18 @@ useEffect(() => {
   
   // Handle track changes
   useEffect(() => {
-    if (musicRef.current) {
+    if (musicRef.current && isAudioInitialized) {
+      const wasPlaying = !musicRef.current.paused
       musicRef.current.pause()
       musicRef.current.src = MUSIC_TRACKS[currentTrack]
+      musicRef.current.load() // Ensure the new source is loaded
       
-      if (isMusicPlaying) {
+      if (wasPlaying || isMusicPlaying) {
         musicRef.current.play()
           .catch(e => console.log('Music autoplay prevented:', e))
       }
     }
-  }, [currentTrack, isMusicPlaying])
+  }, [currentTrack, isMusicPlaying, isAudioInitialized])
   
   // Play a sound effect
   const playSound = (sound: string) => {
@@ -131,6 +128,17 @@ useEffect(() => {
       clone.onended = () => {
         clone.remove()
       }
+    }
+  }
+  
+  // Start music playback (called after page load)
+  const startMusicPlayback = () => {
+    if (musicRef.current && !isMusicPlaying) {
+      musicRef.current.play()
+        .then(() => {
+          setIsMusicPlaying(true)
+        })
+        .catch(e => console.log('Music autoplay prevented:', e))
     }
   }
   
@@ -164,7 +172,7 @@ useEffect(() => {
   }
 
   return (
-    <AudioContext.Provider value={{ playSound, toggleMusic, isMusicPlaying }}>
+    <AudioContext.Provider value={{ playSound, toggleMusic, isMusicPlaying, startMusicPlayback }}>
       {/* Audio Controls UI */}
       <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end">
         <motion.button

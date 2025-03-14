@@ -73,7 +73,7 @@ export default function Home() {
   }
 
   return (
-    <main id="animus-interface" className="animus-container">
+    <main id="animus-interface" className="animus-container max-w-7xl" >
     {!loaded && <LoadingScreen />}
     
     <AnimatedCursor />
